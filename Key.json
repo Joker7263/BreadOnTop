@@ -1,1 +1,21 @@
+{
+  "devices": [
+    {
+      "id": "51add6ce65f12f56",
+      "name": "reymar",
+      "expiry": "2026-6-30",
+      "plan": "premium"
+    },
+    {
+      "id": "74f32a0e87b4d383",
+      "name": "tonton",
+      "expiry": "2026-12-30",
+      "plan": "free"
+    
+      }
+    
+  ]
+}
+
+
 
