@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Style File Viewer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📁 GitHub Clone File Viewer</h1>
+            <div class="upload-area" id="uploadArea">
+                <p>📤 Drag & drop or click to upload files</p>
+                <input type="file" id="fileInput" multiple>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3>Files</h3>
+                <ul id="fileList"></ul>
+            </aside>
+
+            <main class="content">
+                <div class="file-header" id="fileHeader">
+                    <span id="fileName"></span>
+                    <button id="rawBtn" class="raw-btn">📄 View Raw</button>
+                </div>
+                <pre id="fileContent" class="file-content"></pre>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
