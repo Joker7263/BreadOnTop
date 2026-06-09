@@ -3,32 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Style File Viewer</title>
+    <title>GitHub Clone - File Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📁 GitHub Clone File Viewer</h1>
-            <div class="upload-area" id="uploadArea">
-                <p>📤 Drag & drop or click to upload files</p>
-                <input type="file" id="fileInput" multiple>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fab fa-github"></i>
+                <span>GitHub Clone</span>
             </div>
-        </header>
+            
+            <div class="upload-section">
+                <button id="uploadBtn" class="btn-primary">
+                    <i class="fas fa-plus"></i> Upload Files
+                </button>
+                <input type="file" id="fileInput" multiple style="display: none">
+                <button id="newFileBtn" class="btn-secondary">
+                    <i class="fas fa-file"></i> New File
+                </button>
+            </div>
 
-        <div class="main-content">
-            <aside class="sidebar">
-                <h3>Files</h3>
-                <ul id="fileList"></ul>
-            </aside>
+            <div class="repo-info">
+                <i class="fas fa-database"></i>
+                <span id="fileCount">0 files</span>
+            </div>
 
-            <main class="content">
-                <div class="file-header" id="fileHeader">
-                    <span id="fileName"></span>
-                    <button id="rawBtn" class="raw-btn">📄 View Raw</button>
+            <div class="file-explorer">
+                <h3><i class="fas fa-folder-open"></i> Files</h3>
+                <div id="fileTree" class="file-tree"></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="toolbar">
+                <div class="breadcrumb">
+                    <i class="fas fa-code-branch"></i>
+                    <span>main</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span id="currentFileLabel">No file selected</span>
                 </div>
-                <pre id="fileContent" class="file-content"></pre>
-            </main>
+                <div class="actions">
+                    <button id="rawLinkBtn" class="tool-btn" disabled>
+                        <i class="fas fa-link"></i> Copy Raw Link
+                    </button>
+                    <button id="editBtn" class="tool-btn" disabled>
+                        <i class="fas fa-pen"></i> Edit
+                    </button>
+                    <button id="saveBtn" class="tool-btn success" style="display: none;">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button id="deleteBtn" class="tool-btn danger" disabled>
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button id="downloadBtn" class="tool-btn" disabled>
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div id="rawView" class="raw-view" style="display: none;">
+                    <div class="raw-header">
+                        <span><i class="fas fa-file-code"></i> Raw Content</span>
+                        <button id="closeRawBtn" class="close-btn"><i class="fas fa-times"></i></button>
+                    </div>
+                    <pre id="rawContent"></pre>
+                </div>
+
+                <div id="fileViewer" class="file-viewer">
+                    <div class="file-header">
+                        <div class="file-meta">
+                            <i class="fas fa-file"></i>
+                            <span id="fileName">Select a file to view</span>
+                        </div>
+                        <div class="file-actions">
+                            <span id="fileSize"></span>
+                        </div>
+                    </div>
+                    <div id="codeEditor" class="code-editor" contenteditable="false"></div>
+                    <pre id="codeViewer" class="code-viewer"></pre>
+                </div>
+
+                <div id="emptyState" class="empty-state">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>No files yet</h3>
+                    <p>Upload files or create a new file to get started</p>
+                    <button id="emptyUploadBtn" class="btn-primary">Upload Files</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Modal for New File -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file"></i> Create New File</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label>File name:</label>
+                <input type="text" id="newFileName" placeholder="example.js, style.css, index.html">
+                <label>File content (optional):</label>
+                <textarea id="newFileContent" rows="8" placeholder="// Write your code here..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary modal-cancel">Cancel</button>
+                <button class="btn-primary modal-create">Create File</button>
+            </div>
         </div>
     </div>
 
