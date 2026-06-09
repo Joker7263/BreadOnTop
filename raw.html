@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Raw File</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <pre id="content"></pre>
+    <script>
+        const path = window.location.pathname;
+        const encoded = path.replace('/raw/', '');
+        try {
+            const decoded = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+            document.getElementById('content').textContent = decoded.content;
+            document.title = decoded.name;
+        } catch(e) {
+            document.getElementById('content').textContent = 'Invalid raw link';
+        }
+    </script>
+</body>
+</html>
