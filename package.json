@@ -1,0 +1,13 @@
+{
+    "name": "github-clone-viewer",
+    "version": "1.0.0",
+    "description": "GitHub-style file viewer with upload capability",
+    "scripts": {
+        "dev": "serve .",
+        "build": "echo 'No build step required'"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "serve": "^14.2.0"
+    }
+}
