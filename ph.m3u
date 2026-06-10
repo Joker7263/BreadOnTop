@@ -1,0 +1,154 @@
+#EXTM3U
+
+#EXTINF:-1 tvg-id="Philippines" tvg-name=" tv" tvg-logo="https://i.imgur.com/Cu1tAY8.png" group-title="Philippines",GMA 7
+http://136.158.97.2:6610/001/2/ch00000090990000001093/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT379234520260507102335038965&programid=ch00000000000000001214&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001214&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20TsXah2%2FZLFNNIdWrVrXDMAoLvT86fM74ocVChyFS93HUsyK4TH4mOENKJ45mwOyS0g%3D%3D&usersessionid=BLJMICF8T5XXXX&userid=1438418816418&videoid=ch00000090990000001093
+
+#EXTINF:-1 group-title="Philippines",TV5
+http://136.239.158.30:6610/001/2/ch00000090990000001088/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT86578720260605155906141100&programid=ch00000000000000001213&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001213&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2Boh0xOsaoSFLqA0PEh9gVjiytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=J62NMXIGLTMXXX&userid=1150006064464&videoid=ch00000090990000001088
+
+#EXTINF:-1 tvg-id="Philippines" tvg-name=" tv" tvg-logo="https://imgur.com/WcYS3S3" group-title="Philippines",Kapamilya Channel
+http://136.239.173.2:6610/001/2/ch00000090990000001286/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT119862820260605155803103207&programid=ch00000000000000001694&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001694&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2Bqw65FFCygtQMRRIUPF0xuXytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=CCJLYZ04O9IXXX&userid=1004802317138&videoid=ch00000090990000001286
+
+#EXTINF:-1 tvg-id="Philippines" tvg-name=" tv" tvg-logo="https://static.wikia.nocookie.net/russel/images/f/f2/Cine_Mo%21_3D_Logo_2011.png" group-title="Philippines",Cinemo 
+https://d1bail49udbz1k.cloudfront.net/out/v1/78e282e04f0944f3ad0aa1db7a1be645/index_3.m3u8
+
+#EXTINF:-1 tvg-id="Philippines" tvg-name=" tv" tvg-logo="https://static.wikia.nocookie.net/russel/images/f/f2/Cine_Mo%21_3D_Logo_2011.png" group-title="Philippines",Cinemo 2
+http://136.239.158.30:6610/001/2/ch00000090990000001254/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT86584520260507110331070135&programid=ch00000000000000001547&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001547&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BpP1%2FTBq4G4yW%2Bysf7XC2GUytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=RW7BWNI1AISXXX&userid=1828619826254&videoid=ch00000090990000001254
+
+#EXTINF:-1 tvg-id="Philippines" tvg-name=" tv" tvg-logo="https://brandlogo.org/wp-content/uploads/2024/05/All-TV-Logo-300x300.png.webp" group-title="Philippines",ALLTV
+http://136.239.158.10:6610/001/2/ch00000090990000001179/manifest.mpd?AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2Bow35sHUcBhGBpxqddBGYEnytokK1MIobcue1ImXa0ZEA%3D%3D&version=v1.0&BreakPoint=0&virtualDomain=001.live_hls.zte.com&programid=ch00000000000000001415&contentid=ch00000000000000001415&videoid=ch00000090990000001179&recommendtype=0&userid=1205050496206&boid=001&stbid=02%3A00%3A00%3A00%3A00%3A00&terminalflag=1&profilecode=&usersessionid=02WMA0HI2O3AXX&NeedJITP=1&JITPMediaType=DASH&JITPDRMType=NO
+
+#EXTINF:-1 tvg-id="Philippines" tvg-name=" tv" tvg-logo="https://raw.githubusercontent.com/Joker7263/PasswordActivity/refs/heads/main/images/banner/finals.webp" group-title="Philippines",Jeepney TV
+http://161.49.17.2:6610/001/2/ch00000090990000001250/manifest.mpd?AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BpGbNnk2H5Bi8k4yR%2B9AHGFytokK1MIobcue1ImXa0ZEA%3D%3D&version=v1.0&BreakPoint=0&virtualDomain=001.live_hls.zte.com&programid=ch00000000000000001546&contentid=ch00000000000000001546&videoid=ch00000090990000001250&recommendtype=0&userid=1870820485634&boid=001&stbid=02%3A00%3A00%3A00%3A00%3A00&terminalflag=1&profilecode=&usersessionid=6T45HYQ6YE3XXX&NeedJITP=1&JITPMediaType=DASH&JITPDRMType=NO
+
+#EXTINF:-1 tvg-id="TV5_HD" tvg-name="TV5 HD" tvg-logo="https://static.wikia.nocookie.net/russel/images/7/7a/TV5_HD_Logo_2024.png" group-title="Philippines" tvg-key="07c7f996b1734ea288641a68e1cfdc4d" tvg-kid="2615129ef2c846a9bbd43a641c7303ef",TV5 HD
+https://qp-pldt-live-bpk-02-prod.akamaized.net/bpk-tv/tv5_hd/default1/index.mpd
+
+
+#EXTINF:-1 group-title="Philippines",Cartoonito
+http://161.49.17.2:6610/001/2/ch00000090990000001125/manifest.mpd?AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BoZQDeIq8A03ROpfeWN75MYytokK1MIobcue1ImXa0ZEA%3D%3D&version=v1.0&BreakPoint=0&virtualDomain=001.live_hls.zte.com&programid=ch00000000000000001238&contentid=ch00000000000000001238&videoid=ch00000090990000001125&recommendtype=0&userid=1642489849443&boid=001&stbid=02%3A00%3A00%3A00%3A00%3A00&terminalflag=1&profilecode=&usersessionid=9X3U5ZPDLQVXXX&NeedJITP=1&JITPMediaType=DASH&JITPDRMType=NO
+
+#EXTINF:-1 group-title="Philippines",FilAm TV Network
+https://streams.comclark.com/pknsd/filamtv/playlist.m3u8
+
+#EXTINF:-1 group-title="Philippines",TV Maria
+http://136.158.97.2:6610/001/2/ch00000090990000001160/manifest.mpd?AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BqJiJmfV%2B93mjmGGmqynSohytokK1MIobcue1ImXa0ZEA%3D%3D&version=v1.0&BreakPoint=0&virtualDomain=001.live_hls.zte.com&programid=ch00000000000000001374&contentid=ch00000000000000001374&videoid=ch00000090990000001160&recommendtype=0&userid=1605694488407&boid=001&stbid=02%3A00%3A00%3A00%3A00%3A00&terminalflag=1&profilecode=&usersessionid=G669IAJA55PXXX&NeedJITP=1&JITPMediaType=DASH&JITPDRMType=NO
+
+#EXTINF:-1 group-title="Philippines",Tagalized Movie Channel
+http://136.239.159.20:6610/001/2/ch00000090990000001080/manifest.mpd?AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BrHx%2Fyl86rMkFVqtHp1NtQIytokK1MIobcue1ImXa0ZEA%3D%3D&version=v1.0&BreakPoint=0&virtualDomain=001.live_hls.zte.com&programid=ch00000000000000001153&contentid=ch00000000000000001153&videoid=ch00000090990000001080&recommendtype=0&userid=1123674387331&boid=001&stbid=02%3A00%3A00%3A00%3A00%3A00&terminalflag=1&profilecode=&usersessionid=OWFM2G9EILPXXX&NeedJITP=1&JITPMediaType=DASH&JITPDRMType=NO
+
+#EXTINF:-1 group-title="Philippines",INCTV
+http://136.239.159.18:6610/001/2/ch00000090990000001092/manifest.mpd?AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BrC5ZD%2FYbS0KSGrFVJUNIMkytokK1MIobcue1ImXa0ZEA%3D%3D&version=v1.0&BreakPoint=0&virtualDomain=001.live_hls.zte.com&programid=ch00000000000000001178&contentid=ch00000000000000001178&videoid=ch00000090990000001092&recommendtype=0&userid=1760058453659&boid=001&stbid=02%3A00%3A00%3A00%3A00%3A00&terminalflag=1&profilecode=&usersessionid=HILNO5G9U9IXXX&NeedJITP=1&JITPMediaType=DASH&JITPDRMType=NO
+
+#EXTINF:-1 group-title="Philippines",Mindanow Network TV
+https://streams.comclark.com/overlay/mindanow/playlist.m3u8
+
+#EXTINF:-1 group-title="Philippines",CLTV 36
+https://live.cltv36.tv:5443/LiveApp/streams/cltvlive.m3u8
+
+#EXTINF:-1 group-title="Philippines",Bilyonario News Channel
+https://amg19223-amg19223c11-amgplt0352.playout.now3.amagi.tv/playlist/amg19223-amg19223c11-amgplt0352/playlist.m3u8
+
+#EXTINF:-1 group-title="Philippines",CGTN News Live
+http://136.239.173.26:6610/001/2/ch00000090990000001146/manifest.mpd?AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2Bq0bLdlQQxjquEy7BUYBE%2BOytokK1MIobcue1ImXa0ZEA%3D%3D&version=v1.0&BreakPoint=0&virtualDomain=001.live_hls.zte.com&programid=ch00000000000000001316&contentid=ch00000000000000001316&videoid=ch00000090990000001146&recommendtype=0&userid=1917967408923&boid=001&stbid=02%3A00%3A00%3A00%3A00%3A00&terminalflag=1&profilecode=&usersessionid=4ADPFTEPDLCXXX&NeedJITP=1&JITPMediaType=DASH&JITPDRMType=NO
+
+#EXTINF:-1 group-title="Philippines",Cinema One
+http://136.158.97.2:6610/001/2/ch00000090990000001283/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT379217420260601110144122130&programid=ch00000000000000001548&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001548&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2Br2cQyuTRlDkHeiqeVidUqqytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=852NEU8T1ZOXXX&userid=1041236685526&videoid=ch00000090990000001283
+
+#EXTINF:-1 group-title="Philippines",GTV
+http://136.239.159.18:6610/001/2/ch00000090990000001143/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT14802320260605151635020849&programid=ch00000000000000001313&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001313&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BrwAtJC%2BsmBQ5ARU076BdkhytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=AAIUZ2MAG7XXXX&userid=1590268675436&videoid=ch00000090990000001143
+
+#EXTINF:-1 group-title="Philippines",One Sports
+http://136.239.158.18:6610/001/2/ch00000090990000001083/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT50173820260605153952087062&programid=ch00000000000000001173&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001173&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BpiZhzOAmsfItUIS2UHXxD0ytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=RCAJM4IFILAXXX&userid=1797679327850&videoid=ch00000090990000001083
+
+#EXTINF:-1 group-title="Philippines",PBO
+http://136.239.173.10:6610/001/2/ch00000090990000001078/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT249391820260605154711078229&programid=ch00000000000000001137&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001137&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2Bq9SZLE5HgafIcQ2VcLQB9EytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=52Y01DLD7HXXXX&userid=1302493816250&videoid=ch00000090990000001078
+
+#EXTINF:-1 group-title="Philippines",RPTV
+http://136.158.97.2:6610/001/2/ch00000090990000001094/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT379225420260605154934126261&programid=ch00000000000000001215&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001215&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BplioRPAB6XCf%2FrlkX7xxQZytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=YBHPP0KWBIFXXX&userid=1177699247918&videoid=ch00000090990000001094
+
+#EXTINF:-1 group-title="Philippines",A2Z
+http://136.239.173.2:6610/001/2/ch00000090990000001087/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT119759120260605155104096349&programid=ch00000000000000001176&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001176&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BqHRrK8UUahwItHhKpXgPXKytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=U4DB4Z0H2EXXXX&userid=1287297673984&videoid=ch00000090990000001087
+
+#EXTINF:-1 group-title="International",Warner TV
+http://136.239.158.18:6610/001/2/ch00000090990000001096/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT50173920260605160020085025&programid=ch00000000000000001219&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001219&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BqRhIO4pq%2FZNG%2BJhjsEpHHCytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=0QVRZ4LBHCCXXX&userid=1321207134399&videoid=ch00000090990000001096
+
+#EXTINF:-1 group-title="International",Cartoon Network 
+https://cdn4.skygo.mn/live/disk1/Cartoon_Network/HLSv3-FTA/Cartoon_Network-avc1_3000000=12-mp4a_256000_eng=6.m3u8
+
+#EXTINF:-1 group-title="International",Cartoon Network 2
+http://136.239.173.26:6610/001/2/ch00000090990000001178/manifest.mpd?JITPDRMType=NO&version=v1.0&IASHttpSessionId=OTT249339420260605155238067261&programid=ch00000000000000001396&virtualDomain=001.live_hls.zte.com&recommendtype=0&BreakPoint=0&profilecode=&JITPMediaType=DASH&boid=001&terminalflag=1&contentid=ch00000000000000001396&stbid=02:00:00:00:00:00&NeedJITP=1&AuthInfo=v87HD9rEhwHiAdYyrP20Tg5pgSMSITY%2FHYvvCWJRp%2BrybZ3RAQEBSZeKilHKlOj1ytokK1MIobcue1ImXa0ZEA%3D%3D&usersessionid=8K2SX2J7IIWXXX&userid=1894774110158&videoid=ch00000090990000001178
+
+#EXTINF:-1 group-title="International",Moonbug Kids
+https://moonbug-rokuus.amagi.tv/playlist.m3u8
+
+#EXTINF:-1 group-title="International",Vegas Life TV
+https://streams.comclark.com/pknsd/vegaslifetv/playlist.m3u8
+
+#EXTINF:-1 group-title="International",BBC News Asia Pacific
+https://cdn4.skygo.mn/live/disk1/BBC_News/HLSv3-FTA/BBC_News.m3u8
+
+#EXTINF:-1 group-title="International",EWTN Asia-Pacific
+https://cdn3.wowza.com/1/QmVNUVhTNTZSS3Uz/YWQ0aHpi/hls/live/playlist.m3u8
+
+#EXTINF:-1 group-title="International",Arirang
+https://amdlive-ch03-ctnd-com.akamaized.net/arirang_1ch/smil:arirang_1ch.smil/playlist.m3u8
+
+#EXTINF:-1 group-title="International",Bloomberg Asia
+https://www.bloomberg.com/media-manifest/streams/asia.m3u8
+
+#EXTINF:-1 group-title="International",BBC World News
+https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/t=3840/v=pv14/b=5070016/main.m3u8
+
+#EXTINF:-1 group-title="International",CGTN Documentaries
+https://english-livebkali.cgtn.com/live/doccgtn_1.m3u8
+
+#EXTINF:-1 group-title="International",Outdoor Channel
+https://cdn-apse1-prod.tsv2.amagi.tv/linear/amg00718-outdoorchannela-outdoortvnz-samsungnz/playlist.m3u8
+
+#EXTINF:-1 group-title="International",Thrillers
+https://amc-rushbyamc-1-us.vizio.wurl.tv/playlist.m3u8
+
+#EXTINF:-1 group-title="International",Bein Sports Xtra
+https://amg01334-beinsportsllc-beinxtra-localnow-kcy6r.amagi.tv/playlist.m3u8
+
+#EXTINF:-1 group-title="International",MovieSphere
+https://moviesphereuk-samsunguk.amagi.tv/playlist.m3u8
+
+#EXTINF:-1 group-title="International",TFC GUAM
+https://tfcguam-abscbn-ono.amagi.tv/index.m3u8
+
+#EXTINF:-1 group-title="International",3ABN Kids
+https://3abn.bozztv.com/3abn2/Kids_live/smil:Kids_live.smil/playlist.m3u8
+
+#EXTINF:-1 group-title="International",Blues TV
+https://2-fss-2.streamhoster.com/pl_138/205510-3094608-1/playlist.m3u8
+
+#EXTINF:-1 group-title="International",Japanim TV
+https://foxkidstv.be:3369/stream/play.m3u8
+
+#EXTINF:-1 group-title="International",Magic Kids
+https://magicstream.ddns.net/magicstream/stream.m3u8
+
+#EXTINF:-1 group-title="International",Persiana Junior
+https://junhls.persiana.live/hls/stream.m3u8
+
+#EXTINF:-1 group-title="International",Yahoo! Finance
+https://yahoo-samsung.amagi.tv/playlist.m3u8
+
+#EXTINF:-1 group-title="International",EWTN Europe
+https://cdn3.wowza.com/1/T2NXeHF6UGlGbHY3/WFluRldQ/hls/live/playlist.m3u8
+
+#EXTINF:-1 group-title="International",NBA LIVE
+http://lb59.xxip9.top:25461/live/Q5vuYP/511295/2210.m3u8?token=ThFcUhFaQQwRCgBSAwZUBQ5XUlVRDVQGV1IBAA4FAgQHBgQKVgFVBwEQHkdBQURQV1g7WFQWCgBRU1MfG0ZAV0dsXVdACEEHBwUHVAsXGhdCXAlUEg4AHkESClcbCREBAQMAAEAeQVNLRlcXXFRaalJQElhTURIIDRcPXxURXFxqV1FeA1wHFAkQAkceF19GRhdeX0VYXB5BAApHS1JHVxcJFgBaBlsUHxBRCkdbQkdPF14TYHwSHkEHG0dcXUBbWl0WCUBfUEMLEB5HW0ZpR1NGEENVVV1XEUBZEQkRHxBYUkxsAV0NWFZRRgxdW0UXDBdVARIYEl8MDApHVkFsQlxXFglAB1IDBgEQGA==
+
+#EXTINF:-1 group-title="International",NBC
+http://206.212.244.183:25461/live/4abYcSzugD/7732488130/23211.m3u8?token=TUEMUBFQFVsUAAFXBlQHW10HXFsIB1gDAwNXBlBdVVYFBQFUVQgOAlMWFRdHQxcHWQk6UV0SAwNRAVIHGhpGEFMRO1gGGg1DBAMLAgUFR04aEAxVXBIDAU4RE19SGglBB1BTCVoaG0NTTE1QRlkEDmcAAE5QU1wTWF0WWloUEQxYPABUD1lZBRQOGwUWG0cLSxRHAldFVV1OEQFfQkpSF1NBXhNXCQZWFBgbVltCCxZKHUcCG2BxE04RBk5CXV0QXwwKE1gaWlJDDBsZFl4WPUoBFkxLVVhcB0FBDBQIEU8UDgVJPVtYD1hRWkFdWAsRGl5HDRscG1wNXQpCWUpsE18HRgtACwBVABZE
+
+
+#EXTINF:-1 tvg-id="TV5.ph" tvg-logo="https://i.imgur.com/BUVWBm2.png" group-title="Entertainment", Kapatid Channel
+#KODIPROP:inputstreamaddon=inputstream.adaptive
+#KODIPROP:inputstream.adaptive.manifest_type=dash 
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=045d103180f64562b1db7c932741c3ba:c3380548b9075c767a6ae2006ef4bff8
+https://qp-pldt-live-bpk-01-prod.akamaized.net/bpk-tv/kapatid_hd/default/index.mpd
