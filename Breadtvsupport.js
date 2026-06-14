@@ -1,400 +1,483 @@
-// Cloudflare Worker para sa BreadOnTop IPTV
-// I-paste ito sa Cloudflare Workers dashboard
+// ============================================================
+// ZeroTwo TV - Cloudflare Worker
+// Handles:
+// 1. Converge MPD stream proxy (bypasses CORS & mixed content)
+// 2. Channel health checks (online/offline status)
+// 3. Optional: Converts HTTP streams to HTTPS when needed
+// ============================================================
 
-export default {
-    async fetch(request, env, ctx) {
-        const url = new URL(request.url);
-        const path = url.pathname;
-        
-        // CORS headers para payagan ang lahat ng requests
-        const corsHeaders = {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Max-Age': '86400'
-        };
-        
-        // Handle OPTIONS preflight
-        if (request.method === 'OPTIONS') {
-            return new Response(null, { headers: corsHeaders });
-        }
-        
-        // Channel configurations na may Clearkey licenses
-        const channels = {
-            'oneph': {
-                name: 'One PH',
-                url: 'https://qp-pldt-live-bpk-02-prod.akamaized.net/bpk-tv/oneph_sd/default/index.mpd',
-                keyId: 'b1c7e9d24f8a4d6c9e337a2f1c5b8d60',
-                key: '8ff2e524cc1e028f2a4d4925e860c796'
-            },
-            'gma': {
-                name: 'GMA Pinoy TV',
-                url: 'https://abslive.akamaized.net/dash/live/2099522/gmapt3/manifest.mpd',
-                keyId: '7b5d15a7385546768aca9fd505ad5e16',
-                key: 'f534393c84c1a9c17fa36bc3a4380981'
-            },
-            'tv5': {
-                name: 'TV5',
-                url: 'https://qp-pldt-live-bpk-02-prod.akamaized.net/bpk-tv/tv5_hd/default1/index.mpd',
-                keyId: '2615129ef2c846a9bbd43a641c7303ef',
-                key: '07c7f996b1734ea288641a68e1cfdc4d'
-            },
-            'hbo': {
-                name: 'HBO',
-                url: 'https://qp-pldt-live-bpk-02-prod.akamaized.net/bpk-tv/cg_hbohd/default/index.mpd',
-                keyId: 'c2b7a1e95d4f4c3a8e617f9d0a2b6c18',
-                key: '27fca1ab042998b0c2f058b0764d7ed4'
-            },
-            'a2z': {
-                name: 'A2Z',
-                url: 'https://qp-pldt-live-bpk-01-prod.akamaized.net/bpk-tv/cg_a2z/default/index.mpd',
-                keyId: '3f6d8a2c1b7e4c9f8d52a7e1b0c6f93d',
-                key: '4019f9269b9054a2b9e257b114ebbaf2'
-            },
-            'ptv': {
-                name: 'PTV4',
-                url: 'https://qp-pldt-live-bpk-01-prod.akamaized.net/bpk-tv/cg_ptv4_sd/default/index.mpd',
-                keyId: '71a130a851b9484bb47141c8966fb4a3',
-                key: 'ad1f003b4f0b31b75ea4593844435600'
-            },
-            'gmalife': {
-                name: 'GMA Life TV',
-                url: 'https://abslive.akamaized.net/dash/live/2099522/glife3/manifest.mpd',
-                keyId: '5d308ef487f54107b7da758e195ecbd3',
-                key: '9d4004d4c065dd4b85ad5bd12c35386f'
-            },
-            'onenews': {
-                name: 'One News',
-                url: 'https://qp-pldt-live-bpk-01-prod.akamaized.net/bpk-tv/onenews_hd1/default/index.mpd',
-                keyId: '2e6a9d7c1f4b4c8a8d33c7b1f0a5e924',
-                key: '4c71e178d090332fbfe72e023b59f6d2'
-            }
-        };
-        
-        // Serve HTML page para sa root path
-        if (path === '/' || path === '/index.html') {
-            const html = await getHTMLPage();
-            return new Response(html, {
-                headers: {
-                    'Content-Type': 'text/html;charset=UTF-8',
-                    ...corsHeaders
-                }
-            });
-        }
-        
-        // API endpoint para makuha ang channel list
-        if (path === '/api/channels') {
-            const channelList = Object.entries(channels).map(([id, ch]) => ({
-                id: id,
-                name: ch.name,
-                url: `/api/stream/${id}`
-            }));
-            return new Response(JSON.stringify(channelList), {
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...corsHeaders
-                }
-            });
-        }
-        
-        // Stream proxy - binabasa ang MPD at nag-iinject ng Clearkey info
-        if (path.startsWith('/api/stream/')) {
-            const channelId = path.split('/').pop();
-            const channel = channels[channelId];
-            
-            if (!channel) {
-                return new Response('Channel not found', { status: 404 });
-            }
-            
-            try {
-                // Fetch original MPD
-                const mpdResponse = await fetch(channel.url, {
-                    headers: {
-                        'Origin': 'https://qp-pldt-live-bpk-02-prod.akamaized.net',
-                        'Referer': 'https://cignal.tv/',
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                    }
-                });
-                
-                let mpdContent = await mpdResponse.text();
-                
-                // I-inject ang Clearkey license URL sa MPD
-                const licenseUrl = `https://${url.hostname}/api/license/${channelId}`;
-                const clearkeyXml = `<ContentProtection schemeIdUri="urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed">
-                    <clearkey:Laurl>${licenseUrl}</clearkey:Laurl>
-                </ContentProtection>`;
-                
-                // I-insert sa bawat AdaptationSet
-                mpdContent = mpdContent.replace(/<\/AdaptationSet>/g, `${clearkeyXml}</AdaptationSet>`);
-                
-                return new Response(mpdContent, {
-                    headers: {
-                        'Content-Type': 'application/dash+xml',
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        ...corsHeaders
-                    }
-                });
-            } catch (error) {
-                return new Response(`Error fetching stream: ${error.message}`, { status: 500 });
-            }
-        }
-        
-        // License endpoint para sa Clearkey decryption
-        if (path.startsWith('/api/license/')) {
-            const channelId = path.split('/').pop();
-            const channel = channels[channelId];
-            
-            if (!channel) {
-                return new Response('Invalid license request', { status: 400 });
-            }
-            
-            // Clearkey license response format
-            const licenseResponse = {
-                keys: [{
-                    kty: 'oct',
-                    kid: channel.keyId,
-                    k: channel.key
-                }],
-                type: 'temporary'
-            };
-            
-            return new Response(JSON.stringify(licenseResponse), {
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...corsHeaders
-                }
-            });
-        }
-        
-        // 404 for other paths
-        return new Response('BreadOnTop IPTV Worker - Channel proxy active', { 
-            status: 200,
-            headers: corsHeaders
-        });
-    }
+// Configuration
+const CONFIG = {
+  // Enable CORS headers for all responses
+  corsEnabled: true,
+  
+  // Timeout for fetch requests (milliseconds)
+  fetchTimeout: 15000,
+  
+  // Cache TTL for channel health checks (seconds)
+  healthCheckTTL: 300,
+  
+  // User-Agent to use for proxied requests
+  userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  
+  // Allowed origins for CORS (use '*' for all, or specify your domain)
+  allowedOrigins: ['*'],
+  
+  // Converge stream hosts that need proxying
+  convergeHosts: [
+    '136.158.97.2',
+    '136.239.159.18',
+    '136.239.158.30',
+    '136.239.173.2',
+    '136.239.173.3',
+    '136.239.173.26',
+    '161.49.17.2',
+    '136.239.158.10',
+    '136.239.173.10',
+    '136.239.159.20'
+  ],
+  
+  // Channels to check for health (add more as needed)
+  healthCheckChannels: [
+    { name: 'GMA 7', url: 'http://136.158.97.2:6610/001/2/ch00000090990000001093/manifest.mpd' },
+    { name: 'GTV', url: 'http://136.239.159.18:6610/001/2/ch00000090990000001143/manifest.mpd' },
+    { name: 'Kapamilya Channel HD', url: 'http://136.239.173.2:6610/001/2/ch00000090990000001286/manifest.mpd' },
+    { name: 'TV5', url: 'http://136.239.158.30:6610/001/2/ch00000090990000001088/manifest.mpd' },
+    { name: 'A2Z', url: 'http://136.239.173.2:6610/001/2/ch00000090990000001089/manifest.mpd' },
+    { name: 'CNN Philippines', url: 'http://136.239.173.2:6610/001/2/ch00000090990000001092/manifest.mpd' }
+  ]
 };
 
-// HTML Page na ipapakita sa root
-async function getHTMLPage() {
-    return `<!DOCTYPE html>
-<html lang="en">
+// ============================================================
+// Helper Functions
+// ============================================================
+
+/**
+ * Add CORS headers to response
+ */
+function addCorsHeaders(headers = new Headers()) {
+  if (CONFIG.corsEnabled) {
+    headers.set('Access-Control-Allow-Origin', '*');
+    headers.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+    headers.set('Access-Control-Allow-Headers', 'Content-Type, Range, User-Agent');
+    headers.set('Access-Control-Expose-Headers', 'Content-Length, Content-Range');
+    headers.set('Access-Control-Max-Age', '86400');
+  }
+  return headers;
+}
+
+/**
+ * Handle OPTIONS request (CORS preflight)
+ */
+function handleOptions() {
+  const headers = addCorsHeaders(new Headers());
+  headers.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, Range, User-Agent');
+  headers.set('Access-Control-Max-Age', '86400');
+  return new Response(null, { status: 204, headers });
+}
+
+/**
+ * Check if URL needs proxying (Converge HTTP stream)
+ */
+function shouldProxyUrl(urlString) {
+  try {
+    const url = new URL(urlString);
+    // Proxy if it's an HTTP stream from converge hosts
+    if (url.protocol === 'http:' && CONFIG.convergeHosts.includes(url.hostname)) {
+      return true;
+    }
+    // Also proxy RTMP-like streams that have been converted to HTTP
+    if (urlString.includes(':1935') || urlString.includes('rtmp')) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Fetch and proxy a stream with proper headers
+ */
+async function proxyStream(urlString, request) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), CONFIG.fetchTimeout);
+  
+  try {
+    // Convert URL if needed (fix backslashes)
+    let cleanUrl = urlString.replace(/\\/g, '/');
+    
+    // Prepare headers for the proxied request
+    const headers = new Headers();
+    headers.set('User-Agent', CONFIG.userAgent);
+    headers.set('Accept', '*/*');
+    headers.set('Accept-Language', 'en-US,en;q=0.9');
+    headers.set('Connection', 'keep-alive');
+    headers.set('Cache-Control', 'no-cache');
+    
+    // Forward range header if present (for seeking)
+    const rangeHeader = request.headers.get('Range');
+    if (rangeHeader) {
+      headers.set('Range', rangeHeader);
+    }
+    
+    // Forward origin header for CORS
+    const origin = request.headers.get('Origin');
+    if (origin) {
+      headers.set('Origin', origin);
+    }
+    
+    const response = await fetch(cleanUrl, {
+      method: 'GET',
+      headers: headers,
+      signal: controller.signal,
+      redirect: 'follow'
+    });
+    
+    clearTimeout(timeoutId);
+    
+    // Create response with CORS headers
+    const responseHeaders = addCorsHeaders(new Headers(response.headers));
+    
+    // Add content-type if missing
+    if (!responseHeaders.has('Content-Type')) {
+      if (cleanUrl.endsWith('.mpd')) {
+        responseHeaders.set('Content-Type', 'application/dash+xml');
+      } else if (cleanUrl.endsWith('.m3u8')) {
+        responseHeaders.set('Content-Type', 'application/vnd.apple.mpegurl');
+      } else if (cleanUrl.includes('manifest.mpd')) {
+        responseHeaders.set('Content-Type', 'application/dash+xml');
+      } else if (cleanUrl.includes('playlist.m3u8')) {
+        responseHeaders.set('Content-Type', 'application/vnd.apple.mpegurl');
+      }
+    }
+    
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: responseHeaders
+    });
+    
+  } catch (error) {
+    clearTimeout(timeoutId);
+    
+    if (error.name === 'AbortError') {
+      return new Response('Request timeout', { status: 504, headers: addCorsHeaders() });
+    }
+    
+    console.error(`Proxy error for ${urlString}:`, error);
+    return new Response(`Proxy error: ${error.message}`, { 
+      status: 502, 
+      headers: addCorsHeaders() 
+    });
+  }
+}
+
+/**
+ * Check channel health (simple HEAD request)
+ */
+async function checkChannelHealth(urlString) {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const response = await fetch(urlString, {
+      method: 'HEAD',
+      headers: { 'User-Agent': CONFIG.userAgent },
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    return {
+      online: response.ok,
+      status: response.status,
+      statusText: response.statusText
+    };
+  } catch (error) {
+    return {
+      online: false,
+      status: 0,
+      statusText: error.message
+    };
+  }
+}
+
+/**
+ * Serve health check status page
+ */
+async function serveHealthCheck() {
+  const results = [];
+  
+  for (const channel of CONFIG.healthCheckChannels) {
+    const status = await checkChannelHealth(channel.url);
+    results.push({
+      name: channel.name,
+      url: channel.url,
+      online: status.online,
+      status: status.status,
+      checkedAt: new Date().toISOString()
+    });
+  }
+  
+  const html = `<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>BreadOnTop IPTV - Cignal + Converge Philippines</title>
-    <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.11.6/dist/shaka-player.compiled.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: white;
-            padding: 16px;
-        }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding: 20px;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 24px;
-        }
-        .header h1 { font-size: 1.8rem; color: #e94560; }
-        .player-wrapper {
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        video {
-            width: 100%;
-            height: auto;
-            max-height: 55vh;
-            background: black;
-        }
-        .info-bar {
-            background: #1a1f2e;
-            padding: 14px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .current-channel {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .current-logo {
-            width: 45px;
-            height: 45px;
-            object-fit: contain;
-            background: white;
-            border-radius: 10px;
-            padding: 6px;
-        }
-        .status {
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-ready { background: #2c3e50; }
-        .status-playing { background: #2ecc71; }
-        .status-loading { background: #f39c12; animation: pulse 1s infinite; }
-        .status-error { background: #e74c3c; }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        .channels-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            max-height: 420px;
-            overflow-y: auto;
-            padding: 4px;
-        }
-        .channel-card {
-            background: #141824;
-            border-radius: 14px;
-            padding: 10px 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid #252a3e;
-        }
-        .channel-card:hover, .channel-card.active {
-            background: #e94560;
-            transform: translateX(3px);
-        }
-        .channel-logo {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
-            background: white;
-            border-radius: 8px;
-            padding: 5px;
-        }
-        .channel-name { font-size: 0.85rem; font-weight: 600; }
-        .channel-group { font-size: 0.65rem; opacity: 0.7; }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 0.7rem;
-            opacity: 0.5;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>ZeroTwo TV - Channel Health Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      color: #e0e0e0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #2196F3, #00BCD4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 30px;
+      font-size: 0.85rem;
+    }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .channel-card {
+      background: rgba(20, 25, 40, 0.9);
+      border-radius: 12px;
+      padding: 15px;
+      border-left: 4px solid #ff4444;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .channel-card.online {
+      border-left-color: #00c851;
+    }
+    .channel-card.offline {
+      border-left-color: #ff4444;
+    }
+    .channel-card.checking {
+      border-left-color: #f59e0b;
+    }
+    .channel-name {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .status-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .status-badge.online {
+      background: rgba(0, 200, 81, 0.2);
+      color: #00c851;
+    }
+    .status-badge.offline {
+      background: rgba(255, 68, 68, 0.2);
+      color: #ff4444;
+    }
+    .status-badge.checking {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+    }
+    .channel-url {
+      font-size: 0.7rem;
+      color: #888;
+      word-break: break-all;
+      font-family: monospace;
+      margin-top: 8px;
+    }
+    .timestamp {
+      text-align: center;
+      font-size: 0.7rem;
+      color: #666;
+      margin-top: 20px;
+    }
+    .refresh-btn {
+      display: block;
+      width: 160px;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #2196F3, #00BCD4);
+      border: none;
+      border-radius: 30px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .refresh-btn:hover {
+      transform: scale(1.02);
+    }
+    .proxy-info {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    .proxy-info code {
+      background: rgba(33, 150, 243, 0.2);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+    @media (max-width: 600px) {
+      .status-grid { grid-template-columns: 1fr; }
+      body { padding: 12px; }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>🍞 BreadOnTop IPTV</h1>
-        <p>Cignal TV · Converge TV · Philippines</p>
-        <small>Powered by Cloudflare Worker | DASH + Clearkey</small>
-    </div>
-
-    <div class="player-wrapper">
-        <video id="videoPlayer" controls autoplay playsinline></video>
-        <div class="info-bar">
-            <div class="current-channel" id="currentChannelInfo">
-                <img class="current-logo" id="currentLogo" src="https://i.imgur.com/gkluDe9.png">
-                <div>
-                    <div id="currentName" style="font-weight: bold;">One PH</div>
-                    <div id="currentGroup" style="font-size: 0.7rem; opacity: 0.7;">Entertainment</div>
-                </div>
-            </div>
-            <div class="status status-ready" id="statusDisplay">● Ready</div>
+  <div class="container">
+    <h1>📺 ZeroTwo TV Channel Monitor</h1>
+    <div class="subtitle">Real-time channel health status | Cloudflare Worker Proxy</div>
+    
+    <div class="status-grid" id="statusGrid">
+      ${results.map(ch => `
+        <div class="channel-card ${ch.online ? 'online' : 'offline'}">
+          <div class="channel-name">
+            ${escapeHtml(ch.name)}
+            <span class="status-badge ${ch.online ? 'online' : 'offline'}">${ch.online ? '● ONLINE' : '● OFFLINE'}</span>
+          </div>
+          <div class="channel-url">${escapeHtml(ch.url.substring(0, 80))}${ch.url.length > 80 ? '...' : ''}</div>
+          <div style="font-size:0.7rem; margin-top:6px; color:#aaa;">HTTP ${ch.status}</div>
         </div>
+      `).join('')}
     </div>
-
-    <div class="channels-grid" id="channelList"></div>
-    <div class="footer">⚡ BreadOnTop IPTV · Cloudflare Worker Proxy Active</div>
-</div>
-
-<script>
-    const channels = [
-        { id: "oneph", name: "One PH", group: "Entertainment", logo: "https://i.imgur.com/gkluDe9.png" },
-        { id: "gma", name: "GMA Pinoy TV", group: "Entertainment", logo: "https://upload.wikimedia.org/wikipedia/en/a/af/GMA_Pinoy_TV_logo.png" },
-        { id: "gmalife", name: "GMA Life TV", group: "Lifestyle", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/GMA_Life_TV_logo.png/1280px-GMA_Life_TV_logo.png" },
-        { id: "tv5", name: "TV5", group: "Entertainment", logo: "https://static.wikia.nocookie.net/russel/images/7/7a/TV5_HD_Logo_2024.png" },
-        { id: "a2z", name: "A2Z", group: "Entertainment", logo: "https://static.wikia.nocookie.net/russel/images/8/85/A2Z_Channel_11_without_Channel_11_3D_Logo_2020.png" },
-        { id: "ptv", name: "PTV4", group: "News", logo: "https://static.wikia.nocookie.net/russel/images/d/dc/PTV_4_Para_Sa_Bayan_Alternative_Logo_June_2017.png" },
-        { id: "hbo", name: "HBO", group: "Movies", logo: "https://images.now-tv.com/shares/channelPreview/img/en_hk/color/ch115_170_122" },
-        { id: "onenews", name: "One News", group: "News", logo: "https://i.imgur.com/bpRiu54.png" }
-    ];
-
-    let player = null;
-
-    async function initPlayer() {
-        const video = document.getElementById('videoPlayer');
-        player = new shaka.Player(video);
-        player.configure({
-            drm: { clearKeys: {}, servers: {} }
-        });
-        player.addEventListener('error', (e) => {
-            document.getElementById('statusDisplay').textContent = '⚠️ Error';
-            document.getElementById('statusDisplay').className = 'status status-error';
-        });
-    }
-
-    async function loadChannel(channel) {
-        if (!player) await initPlayer();
-        
-        document.getElementById('currentLogo').src = channel.logo;
-        document.getElementById('currentName').textContent = channel.name;
-        document.getElementById('currentGroup').textContent = channel.group;
-        
-        const statusDiv = document.getElementById('statusDisplay');
-        statusDiv.textContent = '🔄 Loading...';
-        statusDiv.className = 'status status-loading';
-        
-        // Highlight active
-        document.querySelectorAll('.channel-card').forEach(card => {
-            card.classList.remove('active');
-            if (card.querySelector('.channel-name')?.innerText === channel.name) {
-                card.classList.add('active');
-            }
-        });
-        
-        try {
-            const streamUrl = \`/api/stream/\${channel.id}\`;
-            await player.load(streamUrl);
-            statusDiv.textContent = '● Playing';
-            statusDiv.className = 'status status-playing';
-        } catch (error) {
-            statusDiv.textContent = '⚠️ Failed';
-            statusDiv.className = 'status status-error';
-        }
-    }
-
-    function renderChannels() {
-        const container = document.getElementById('channelList');
-        container.innerHTML = '';
-        channels.forEach(channel => {
-            const card = document.createElement('div');
-            card.className = 'channel-card';
-            card.innerHTML = \`
-                <img class="channel-logo" src="\${channel.logo}" onerror="this.src='https://i.imgur.com/31e7xew.png'">
-                <div>
-                    <div class="channel-name">\${channel.name}</div>
-                    <div class="channel-group">\${channel.group}</div>
-                </div>
-            \`;
-            card.onclick = () => loadChannel(channel);
-            container.appendChild(card);
-        });
-    }
-
-    window.onload = async () => {
-        renderChannels();
-        await initPlayer();
-        if (channels.length) loadChannel(channels[0]);
-    };
-</script>
+    
+    <button class="refresh-btn" onclick="location.reload()">⟳ Refresh Status</button>
+    
+    <div class="proxy-info">
+      <strong>🔧 Proxy Active</strong><br>
+      Converge MPD streams are being proxied through this worker.<br>
+      To use: <code>${new URL(request?.url || 'https://worker.dev').origin}/stream-proxy?url=STREAM_URL</code>
+    </div>
+    <div class="timestamp">Last updated: ${new Date().toISOString()}</div>
+  </div>
+  <script>
+    // Auto-refresh every 30 seconds (but only if page is visible)
+    let refreshInterval = setInterval(() => {
+      if (!document.hidden) location.reload();
+    }, 30000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) clearInterval(refreshInterval);
+      else refreshInterval = setInterval(() => location.reload(), 30000);
+    });
+  </script>
 </body>
 </html>`;
+  
+  const headers = addCorsHeaders(new Headers());
+  headers.set('Content-Type', 'text/html; charset=utf-8');
+  headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  
+  return new Response(html, { status: 200, headers });
 }
+
+/**
+ * Escape HTML special characters
+ */
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Main request handler
+ */
+async function handleRequest(request) {
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+  
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return handleOptions();
+  }
+  
+  // Health check endpoint
+  if (pathname === '/health-check' || pathname === '/status') {
+    return await serveHealthCheck();
+  }
+  
+  // Stream proxy endpoint
+  if (pathname === '/stream-proxy') {
+    const targetUrl = url.searchParams.get('url');
+    
+    if (!targetUrl) {
+      return new Response('Missing "url" parameter', { 
+        status: 400, 
+        headers: addCorsHeaders() 
+      });
+    }
+    
+    // Validate URL (basic)
+    try {
+      new URL(targetUrl);
+    } catch (e) {
+      return new Response('Invalid URL parameter', { 
+        status: 400, 
+        headers: addCorsHeaders() 
+      });
+    }
+    
+    return await proxyStream(targetUrl, request);
+  }
+  
+  // Simple ping/status endpoint
+  if (pathname === '/ping' || pathname === '/') {
+    const headers = addCorsHeaders(new Headers());
+    headers.set('Content-Type', 'application/json');
+    return new Response(JSON.stringify({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'ZeroTwo TV Stream Proxy',
+      endpoints: {
+        proxy: '/stream-proxy?url=STREAM_URL',
+        health: '/health-check'
+      }
+    }), { status: 200, headers });
+  }
+  
+  // 404 for other routes
+  return new Response('Not Found', { 
+    status: 404, 
+    headers: addCorsHeaders() 
+  });
+}
+
+// Register event listener
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request));
+});
